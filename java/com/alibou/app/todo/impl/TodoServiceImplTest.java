@@ -17,8 +17,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("TodoServiceImpl Unit Test")
@@ -36,9 +38,9 @@ class TodoServiceImplTest {
 
   private Category testCategory;
   private Todo testTodo;
-  private TodoRequest testTodoRequest;
-  private TodoUpdateRequest testTodoUpdateRequest;
-  private TodoResponse testTodoResponse;
+  private TodoRequest todoRequest;
+  private TodoUpdateRequest todoUpdateRequest;
+  private TodoResponse todoResponse;
 
   @BeforeEach
   void setUp() {
@@ -68,6 +70,16 @@ class TodoServiceImplTest {
       .category(this.testCategory)
       .build();
 
+    this.todoRequest = TodoRequest.builder()
+      .title("New Todo")
+      .description(("New Description"))
+      .startDate(LocalDate.now())
+      .endDate(LocalDate.now().plusDays(1))
+      .startTime(LocalTime.of(9, 0))
+      .endTime(LocalTime.of(17,0))
+      .categoryId("category-123")
+      .build();
+
   }
 
   @Nested
@@ -79,8 +91,11 @@ class TodoServiceImplTest {
     void ShouldCreateTodoSuccessfully() {
       // Given
       final String userId = "user-123";
+      when(categoryRepository.findByIdAndUserId(todoRequest.getCategoryId(), userId))
+        .thenReturn(Optional.of(testCategory));
+      when(todoMapper.toTodo(todoRequest)).thenReturn(testTodo);
       // When
-      final String result = todoService.createTodo(null, userId);
+      final String result = todoService.createTodo(todoRequest, userId);
       // Then
       assertNotNull(result);
     }
