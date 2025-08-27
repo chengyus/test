@@ -1,9 +1,15 @@
 package com.alibou.app.todo.impl;
 
+import com.alibou.app.category.CategoryRepository;
+import com.alibou.app.todo.TodoMapper;
+import com.alibou.app.todo.TodoRepository;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,20 +17,24 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("TodoServiceImpl Unit Test")
 class TodoServiceImplTest {
-  @Test
-  @DisplayName("Create todo test method")
-  void createTodos(){
-    fail();
-  }
 
-  @Test
-  void success(){
+  @Mock
+  private TodoRepository todoRepository;
+  @Mock
+  private CategoryRepository categoryRepository;
+  @Mock
+  private TodoMapper todoMapper;
 
-  }
+  @InjectMocks
+  private TodoServiceImpl todoService;
 
-  @Test
-  @Disabled
-  void ignored() {
+  @Nested
+  @DisplayName("Create Todo Tests")
+  class CreateTodoTests {
 
+    @Test
+    void test() {
+
+    }
   }
 }
