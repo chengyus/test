@@ -33,8 +33,14 @@ class TodoServiceImplTest {
   class CreateTodoTests {
 
     @Test
-    void test() {
-
+    @DisplayName("Should create todo successfully when valid request and cstegory exists.")
+    void ShouldCreateTodoSuccessfully() {
+      // Given
+      final String userId = "user-123";
+      // When
+      final String result = todoService.createTodo(null, userId);
+      // Then
+      assertNotNull(result);
     }
   }
 }
