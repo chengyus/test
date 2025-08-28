@@ -20,8 +20,10 @@ import java.time.LocalTime;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -102,7 +104,14 @@ class TodoServiceImplTest {
       // Then
       assertNotNull(result);
       assertEquals("todo-123", result);
-      verify(categoryRepository).findByIdAndUserId(todoRequest.getCategoryId(), userId);
+      verify(categoryRepository, times(1)).findByIdAndUserId(todoRequest.getCategoryId(), userId);
+      verify(todoMapper, times(1)).toTodo(todoRequest);
+      verify(todoRepository, times(1)).save(testTodo);
+
+      // Verify category is set on todo.
+      verify(todoRepository)
+          .save(argThat(todo -> todo.getCategory() != null && todo.getCategory().getId().equals("category-123")));
+
     }
   }
 }
