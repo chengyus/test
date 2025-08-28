@@ -22,6 +22,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("TodoServiceImpl Unit Test")
@@ -101,6 +102,7 @@ class TodoServiceImplTest {
       // Then
       assertNotNull(result);
       assertEquals("todo-123", result);
+      verify(categoryRepository).findByIdAndUserId(todoRequest.getCategoryId(), userId);
     }
   }
 }
