@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -45,40 +46,40 @@ class TodoServiceImplTest {
   @BeforeEach
   void setUp() {
     final User testUser = User.builder()
-      .id("user-123")
-      .firstName("John")
-      .lastName("Doe")
-      .email("john.doe@example.com")
-      .build();
+        .id("user-123")
+        .firstName("John")
+        .lastName("Doe")
+        .email("john.doe@example.com")
+        .build();
 
     this.testCategory = Category.builder()
-      .id("category-123")
-      .name("Work")
-      .description("Work related todos")
-      .build();
+        .id("category-123")
+        .name("Work")
+        .description("Work related todos")
+        .build();
 
     this.testTodo = Todo.builder()
-      .id("todo-123")
-      .title("Test todo")
-      .description("test Description")
-      .startDate(LocalDate.now())
-      .endDate(LocalDate.now().plusDays(1))
-      .startTime(LocalTime.of(9, 0))
-      .endTime(LocalTime.of(17,0))
-      .done(false)
-      .user(testUser)
-      .category(this.testCategory)
-      .build();
+        .id("todo-123")
+        .title("Test todo")
+        .description("test Description")
+        .startDate(LocalDate.now())
+        .endDate(LocalDate.now().plusDays(1))
+        .startTime(LocalTime.of(9, 0))
+        .endTime(LocalTime.of(17, 0))
+        .done(false)
+        .user(testUser)
+        .category(this.testCategory)
+        .build();
 
     this.todoRequest = TodoRequest.builder()
-      .title("New Todo")
-      .description(("New Description"))
-      .startDate(LocalDate.now())
-      .endDate(LocalDate.now().plusDays(1))
-      .startTime(LocalTime.of(9, 0))
-      .endTime(LocalTime.of(17,0))
-      .categoryId("category-123")
-      .build();
+        .title("New Todo")
+        .description(("New Description"))
+        .startDate(LocalDate.now())
+        .endDate(LocalDate.now().plusDays(1))
+        .startTime(LocalTime.of(9, 0))
+        .endTime(LocalTime.of(17, 0))
+        .categoryId("category-123")
+        .build();
 
   }
 
@@ -92,12 +93,14 @@ class TodoServiceImplTest {
       // Given
       final String userId = "user-123";
       when(categoryRepository.findByIdAndUserId(todoRequest.getCategoryId(), userId))
-        .thenReturn(Optional.of(testCategory));
+          .thenReturn(Optional.of(testCategory));
       when(todoMapper.toTodo(todoRequest)).thenReturn(testTodo);
+      when(todoRepository.save(any(Todo.class))).thenReturn(testTodo);
       // When
       final String result = todoService.createTodo(todoRequest, userId);
       // Then
       assertNotNull(result);
+      assertEquals("todo-123", result);
     }
   }
 }
