@@ -134,5 +134,28 @@ class TodoServiceImplTest {
       verifyNoInteractions(todoMapper);
       verifyNoInteractions(todoRepository);
     }
+
+    @Test
+    @DisplayName("Should Handle null catgegoryId in request")
+    void shouldHandleNullCatIdInRequest() {
+      // Given
+      final String userId = "user-123";
+      todoRequest.setCategoryId(null);
+
+      when(categoryRepository.findByIdAndUserId(null, userId))
+        .thenReturn(Optional.empty());
+
+      // When & Then
+      final EntityNotFoundException exception = assertThrows(
+        EntityNotFoundException.class,
+        () -> TodoServiceImplTest.this.todoService.createTodo(TodoServiceImplTest.this.todoRequest, userId));
+
+      assertNotNull(exception);
+      assertEquals("No category was found for that user with id " + todoRequest.getCategoryId(),
+        exception.getMessage());
+      verify(categoryRepository, times(1)).findByIdAndUserId(todoRequest.getCategoryId(), userId);
+      verifyNoInteractions(todoMapper);
+      verifyNoInteractions(todoRepository);
+    }
   }
 }
