@@ -124,12 +124,16 @@ class TodoServiceImplTest {
       final String userId = "user-123";
       when(categoryRepository.findByIdAndUserId(todoRequest.getCategoryId(), userId))
           .thenReturn(Optional.empty());
+
       // When & Then
       final EntityNotFoundException exception = assertThrows(
           EntityNotFoundException.class,
           () -> TodoServiceImplTest.this.todoService.createTodo(TodoServiceImplTest.this.todoRequest, userId));
 
-      assertEquals("No category was found for test with id category-123", exception.getMessage());
+      assertEquals("No category was found for that user with id" + todoRequest.getCategoryId(),
+          exception.getMessage());
+      verify(categoryRepository, times(1)).findByIdAndUserId(todoRequest.getCategoryId(), userId);
+      verify(todoMapper, times(0)).toTodo(todoRequest);
     }
   }
 }
