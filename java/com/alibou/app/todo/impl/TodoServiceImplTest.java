@@ -25,9 +25,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("TodoServiceImpl Unit Test")
@@ -130,10 +128,11 @@ class TodoServiceImplTest {
           EntityNotFoundException.class,
           () -> TodoServiceImplTest.this.todoService.createTodo(TodoServiceImplTest.this.todoRequest, userId));
 
-      assertEquals("No category was found for that user with id" + todoRequest.getCategoryId(),
+      assertEquals("No category was found for that user with id " + todoRequest.getCategoryId(),
           exception.getMessage());
       verify(categoryRepository, times(1)).findByIdAndUserId(todoRequest.getCategoryId(), userId);
-      verify(todoMapper, times(0)).toTodo(todoRequest);
+      verifyNoInteractions(todoMapper);
+      verifyNoInteractions(todoRepository);
     }
   }
 }
