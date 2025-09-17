@@ -85,7 +85,7 @@ class TodoServiceImplTest {
         .categoryId("category-123")
         .build();
 
-    this,todoUpdateRequest = TodoUpdateRequest.builder()
+    this.todoUpdateRequest = TodoUpdateRequest.builder()
         .title("Updated Todo")
         .description(("Updated Description"))
         .startDate(LocalDate.now())
@@ -178,7 +178,7 @@ class TodoServiceImplTest {
       final String userId = "user-123";
       final String todoId = "todo-123";
 
-      when(todoRepository.findByIdAndUserId("todo-123", userId)).thenReturn(Optional.of(testTodo));
+      when(todoRepository.findById(todoId)).thenReturn(Optional.of(testTodo));
       when(categoryRepository.findByIdAndUserId(todoUpdateRequest.getCategoryId(), userId))
           .thenReturn(Optional.of(testCategory));
       when(todoRepository.save(any(Todo.class))).thenReturn(testTodo);
@@ -191,9 +191,8 @@ class TodoServiceImplTest {
       verify(categoryRepository, times(1)).findByIdAndUserId(testTodo.getCategory().getId(), userId);
       verify(todoMapper).mergerTodo(testTodo, todoUpdateRequest);
       verify(todoRepository).save(testTodo);
-      // Verify category is set on todo.
-      verify(todoRepository)
-          .save(argThat(todo -> todo.getCategory() != null && todo.getCategory().getId().equals("category-123")));
+      // Verify category is set
+      assertEquals(testCategory, testTodo.getCategory());
     }
   }
 }
