@@ -194,5 +194,24 @@ class TodoServiceImplTest {
       // Verify category is set
       assertEquals(testCategory, testTodo.getCategory());
     }
+
+    @Test
+    @DisplayName("Should throw EntityNotFoundException with Todo not found")
+    void shouldThrowEntityNotFoundExceptionWhenTodoNotFound() {
+      final String userId = "user-123";
+      final String todoId = "todo-123";
+      when(todoRepository.findById(todoId)).thenReturn(Optional.empty());
+
+      final EntityNotFoundException exception = assertThrows(
+        EntityNotFoundException.class,
+        () -> todoService.updateTodo(todoUpdateRequest, todoId, userId)
+      );
+
+      assertEquals("Todo not found with id: " + todoId, exception.getMessage());
+      verify(todoRepository, times(1)).findById(todoId);
+      verifyNoInteractions(categoryRepository);
+      verifyNoInteractions(todoMapper);
+      verify(todoRepository, never()).save(any());
+    }
   }
 }
