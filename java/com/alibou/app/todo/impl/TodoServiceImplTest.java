@@ -94,6 +94,16 @@ class TodoServiceImplTest {
         .endTime(LocalTime.of(19, 0))
         .categoryId("category-123")
         .build();
+
+    this.todoResponse = TodoResponse.builder()
+        .id("todo-1234")
+        .title("Test todo")
+        .description("Test Description")
+        .startDate(LocalDate.now())
+        .endDate(LocalDate.now().plusDays(1))
+        .startTime(LocalTime.of(9, 0))
+        .endTime(LocalTime.of(17, 0))
+        .build();
   }
 
   @Nested
