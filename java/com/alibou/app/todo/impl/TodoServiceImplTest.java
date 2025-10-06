@@ -203,9 +203,8 @@ class TodoServiceImplTest {
       when(todoRepository.findById(todoId)).thenReturn(Optional.empty());
 
       final EntityNotFoundException exception = assertThrows(
-        EntityNotFoundException.class,
-        () -> todoService.updateTodo(todoUpdateRequest, todoId, userId)
-      );
+          EntityNotFoundException.class,
+          () -> todoService.updateTodo(todoUpdateRequest, todoId, userId));
 
       assertEquals("Todo not found with id: " + todoId, exception.getMessage());
       verify(todoRepository, times(1)).findById(todoId);
@@ -220,18 +219,30 @@ class TodoServiceImplTest {
       final String userId = "user-123";
       final String todoId = "todo-123";
       when(todoRepository.findById(todoId)).thenReturn(Optional.of(testTodo));
-      when(categoryRepository.findByIdAndUserId(todoUpdateRequest.getCategoryId(), userId)).thenReturn(Optional.empty());
+      when(categoryRepository.findByIdAndUserId(todoUpdateRequest.getCategoryId(), userId))
+          .thenReturn(Optional.empty());
 
       final EntityNotFoundException exception = assertThrows(
-        EntityNotFoundException.class,
-        () -> todoService.updateTodo(todoUpdateRequest, todoId, userId)
-      );
+          EntityNotFoundException.class,
+          () -> todoService.updateTodo(todoUpdateRequest, todoId, userId));
 
-      assertEquals("No category was found for that user with id " + todoUpdateRequest.getCategoryId(), exception.getMessage());
+      assertEquals("No category was found for that user with id " + todoUpdateRequest.getCategoryId(),
+          exception.getMessage());
       verify(todoRepository, times(1)).findById(todoId);
       verify(categoryRepository).findByIdAndUserId(todoUpdateRequest.getCategoryId(), userId);
       verifyNoInteractions(todoMapper);
       verify(todoRepository, never()).save(any());
     }
   }
+
+  @Nested
+  @DisplayName("Find Todo By Id Tests")
+  class FindTodoByIdTests {
+    @Test
+    @DisplayName("Should return todo requests when todo exists")
+    void shouldReturnTodoResponse() {
+
+    }
+  }
+
 }
