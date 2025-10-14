@@ -103,6 +103,7 @@ class TodoServiceImplTest {
         .endDate(LocalDate.now().plusDays(1))
         .startTime(LocalTime.of(9, 0))
         .endTime(LocalTime.of(17, 0))
+        .done(false)
         .build();
   }
 
@@ -251,6 +252,12 @@ class TodoServiceImplTest {
     @Test
     @DisplayName("Should return todo requests when todo exists")
     void shouldReturnTodoResponse() {
+      // Given
+      final String todoId = "todo-123";
+      when(todoRepository.findById(todoId)).thenReturn(Optional.of(testTodo));
+      when(todoMapper.toTodoResponse(testTodo)).thenReturn(todoResponse);
+
+      // When
 
     }
   }
