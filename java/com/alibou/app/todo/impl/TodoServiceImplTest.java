@@ -269,4 +269,23 @@ class TodoServiceImplTest {
     }
   }
 
+  @Test
+  @DisplayName("Should throw EntityNotFoundException when todo not found")
+  void shouldThrowEntityNotFoundExceptionWhenTodoNotFound() {
+    // Given
+    final String todoId = "non-existing-todo";
+    when(todoRepository.findById(todoId))
+      .thenReturn(Optional.empty());
+
+    // When & Then
+    final EntityNotFoundException exception = assertThrows(
+      EntityNotFoundException.class,
+      () -> todoService.findTodoById(todoId)
+    );
+
+    assertEquals("No todo found with id " + todoId, exception.getMessage());
+    verify(todoRepository).findById(todoId);
+    verifyNoInteractions(todoMapper);
+  }
+
 }
