@@ -258,6 +258,13 @@ class TodoServiceImplTest {
       when(todoMapper.toTodoResponse(testTodo)).thenReturn(todoResponse);
 
       // When
+      final TodoResponse result = todoService.findTodoById(todoId);
+
+      // Then
+      assertNotNull(result);
+      assertEquals(todoResponse, result);
+      verify(todoRepository).findById(todoId);
+      verify(todoMapper).toTodoResponse(testTodo);
 
     }
   }
