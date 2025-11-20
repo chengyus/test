@@ -20,7 +20,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -50,61 +52,61 @@ class TodoServiceImplTest {
   @BeforeEach
   void setUp() {
     final User testUser = User.builder()
-        .id("user-123")
-        .firstName("John")
-        .lastName("Doe")
-        .email("john.doe@example.com")
-        .build();
+      .id("user-123")
+      .firstName("John")
+      .lastName("Doe")
+      .email("john.doe@example.com")
+      .build();
 
     this.testCategory = Category.builder()
-        .id("category-123")
-        .name("Work")
-        .description("Work related todos")
-        .build();
+      .id("category-123")
+      .name("Work")
+      .description("Work related todos")
+      .build();
 
     this.testTodo = Todo.builder()
-        .id("todo-123")
-        .title("Test todo")
-        .description("test Description")
-        .startDate(LocalDate.now())
-        .endDate(LocalDate.now().plusDays(1))
-        .startTime(LocalTime.of(9, 0))
-        .endTime(LocalTime.of(17, 0))
-        .done(false)
-        .user(testUser)
-        .category(this.testCategory)
-        .build();
+      .id("todo-123")
+      .title("Test todo")
+      .description("test Description")
+      .startDate(LocalDate.now())
+      .endDate(LocalDate.now().plusDays(1))
+      .startTime(LocalTime.of(9, 0))
+      .endTime(LocalTime.of(17, 0))
+      .done(false)
+      .user(testUser)
+      .category(this.testCategory)
+      .build();
 
     this.todoRequest = TodoRequest.builder()
-        .title("New Todo")
-        .description(("New Description"))
-        .startDate(LocalDate.now())
-        .endDate(LocalDate.now().plusDays(1))
-        .startTime(LocalTime.of(9, 0))
-        .endTime(LocalTime.of(17, 0))
-        .categoryId("category-123")
-        .build();
+      .title("New Todo")
+      .description(("New Description"))
+      .startDate(LocalDate.now())
+      .endDate(LocalDate.now().plusDays(1))
+      .startTime(LocalTime.of(9, 0))
+      .endTime(LocalTime.of(17, 0))
+      .categoryId("category-123")
+      .build();
 
     this.todoUpdateRequest = TodoUpdateRequest.builder()
-        .title("Updated Todo")
-        .description(("Updated Description"))
-        .startDate(LocalDate.now())
-        .endDate(LocalDate.now().plusDays(2))
-        .startTime(LocalTime.of(11, 0))
-        .endTime(LocalTime.of(19, 0))
-        .categoryId("category-123")
-        .build();
+      .title("Updated Todo")
+      .description(("Updated Description"))
+      .startDate(LocalDate.now())
+      .endDate(LocalDate.now().plusDays(2))
+      .startTime(LocalTime.of(11, 0))
+      .endTime(LocalTime.of(19, 0))
+      .categoryId("category-123")
+      .build();
 
     this.todoResponse = TodoResponse.builder()
-        .id("todo-1234")
-        .title("Test todo")
-        .description("Test Description")
-        .startDate(LocalDate.now())
-        .endDate(LocalDate.now().plusDays(1))
-        .startTime(LocalTime.of(9, 0))
-        .endTime(LocalTime.of(17, 0))
-        .done(false)
-        .build();
+      .id("todo-1234")
+      .title("Test todo")
+      .description("Test Description")
+      .startDate(LocalDate.now())
+      .endDate(LocalDate.now().plusDays(1))
+      .startTime(LocalTime.of(9, 0))
+      .endTime(LocalTime.of(17, 0))
+      .done(false)
+      .build();
   }
 
   @Nested
@@ -112,12 +114,12 @@ class TodoServiceImplTest {
   class CreateTodoTests {
 
     @Test
-    @DisplayName("Should create todo successfully when valid request and cstegory exists.")
+    @DisplayName("Should create todo successfully when valid request and category exists.")
     void ShouldCreateTodoSuccessfully() {
       // Given
       final String userId = "user-123";
       when(categoryRepository.findByIdAndUserId(todoRequest.getCategoryId(), userId))
-          .thenReturn(Optional.of(testCategory));
+        .thenReturn(Optional.of(testCategory));
       when(todoMapper.toTodo(todoRequest)).thenReturn(testTodo);
       when(todoRepository.save(any(Todo.class))).thenReturn(testTodo);
       // When
@@ -131,7 +133,7 @@ class TodoServiceImplTest {
 
       // Verify category is set on todo.
       verify(todoRepository)
-          .save(argThat(todo -> todo.getCategory() != null && todo.getCategory().getId().equals("category-123")));
+        .save(argThat(todo -> todo.getCategory() != null && todo.getCategory().getId().equals("category-123")));
 
     }
 
@@ -141,15 +143,15 @@ class TodoServiceImplTest {
       // Given
       final String userId = "user-123";
       when(categoryRepository.findByIdAndUserId(todoRequest.getCategoryId(), userId))
-          .thenReturn(Optional.empty());
+        .thenReturn(Optional.empty());
 
       // When & Then
       final EntityNotFoundException exception = assertThrows(
-          EntityNotFoundException.class,
-          () -> TodoServiceImplTest.this.todoService.createTodo(TodoServiceImplTest.this.todoRequest, userId));
+        EntityNotFoundException.class,
+        () -> TodoServiceImplTest.this.todoService.createTodo(TodoServiceImplTest.this.todoRequest, userId));
 
       assertEquals("No category was found for that user with id " + todoRequest.getCategoryId(),
-          exception.getMessage());
+        exception.getMessage());
       verify(categoryRepository, times(1)).findByIdAndUserId(todoRequest.getCategoryId(), userId);
       verifyNoInteractions(todoMapper);
       verifyNoInteractions(todoRepository);
@@ -163,16 +165,16 @@ class TodoServiceImplTest {
       todoRequest.setCategoryId(null);
 
       when(categoryRepository.findByIdAndUserId(null, userId))
-          .thenReturn(Optional.empty());
+        .thenReturn(Optional.empty());
 
       // When & Then
       final EntityNotFoundException exception = assertThrows(
-          EntityNotFoundException.class,
-          () -> TodoServiceImplTest.this.todoService.createTodo(TodoServiceImplTest.this.todoRequest, userId));
+        EntityNotFoundException.class,
+        () -> TodoServiceImplTest.this.todoService.createTodo(TodoServiceImplTest.this.todoRequest, userId));
 
       assertNotNull(exception);
       assertEquals("No category was found for that user with id " + todoRequest.getCategoryId(),
-          exception.getMessage());
+        exception.getMessage());
       verify(categoryRepository, times(1)).findByIdAndUserId(todoRequest.getCategoryId(), userId);
       verifyNoInteractions(todoMapper);
       verifyNoInteractions(todoRepository);
@@ -191,7 +193,7 @@ class TodoServiceImplTest {
 
       when(todoRepository.findById(todoId)).thenReturn(Optional.of(testTodo));
       when(categoryRepository.findByIdAndUserId(todoUpdateRequest.getCategoryId(), userId))
-          .thenReturn(Optional.of(testCategory));
+        .thenReturn(Optional.of(testCategory));
       when(todoRepository.save(any(Todo.class))).thenReturn(testTodo);
 
       // When
@@ -214,8 +216,8 @@ class TodoServiceImplTest {
       when(todoRepository.findById(todoId)).thenReturn(Optional.empty());
 
       final EntityNotFoundException exception = assertThrows(
-          EntityNotFoundException.class,
-          () -> todoService.updateTodo(todoUpdateRequest, todoId, userId));
+        EntityNotFoundException.class,
+        () -> todoService.updateTodo(todoUpdateRequest, todoId, userId));
 
       assertEquals("Todo not found with id: " + todoId, exception.getMessage());
       verify(todoRepository, times(1)).findById(todoId);
@@ -231,14 +233,14 @@ class TodoServiceImplTest {
       final String todoId = "todo-123";
       when(todoRepository.findById(todoId)).thenReturn(Optional.of(testTodo));
       when(categoryRepository.findByIdAndUserId(todoUpdateRequest.getCategoryId(), userId))
-          .thenReturn(Optional.empty());
+        .thenReturn(Optional.empty());
 
       final EntityNotFoundException exception = assertThrows(
-          EntityNotFoundException.class,
-          () -> todoService.updateTodo(todoUpdateRequest, todoId, userId));
+        EntityNotFoundException.class,
+        () -> todoService.updateTodo(todoUpdateRequest, todoId, userId));
 
       assertEquals("No category was found for that user with id " + todoUpdateRequest.getCategoryId(),
-          exception.getMessage());
+        exception.getMessage());
       verify(todoRepository, times(1)).findById(todoId);
       verify(categoryRepository).findByIdAndUserId(todoUpdateRequest.getCategoryId(), userId);
       verifyNoInteractions(todoMapper);
@@ -288,4 +290,40 @@ class TodoServiceImplTest {
     verifyNoInteractions(todoMapper);
   }
 
+  @Test
+  @DisplayName("Should handle null todo ID")
+  void shouldHandleNullId() {
+    // Given
+    final String todoId = "non-existing-todo";
+    when(todoRepository.findById(null))
+      .thenReturn(Optional.empty());
+
+    // When & Then
+    final EntityNotFoundException exception = assertThrows(
+      EntityNotFoundException.class,
+      () -> todoService.findTodoById(null)
+    );
+
+    assertEquals("No todo found with id null", exception.getMessage());
+    verify(todoRepository).findById(null);
+    verifyNoInteractions(todoMapper);
+  }
+
+  @Nested
+  @DisplayName("FindAllTodosForToday Tests")
+  class FindAllTodosForTodayTests {
+    @Test
+    @DisplayName("should return Todo List when userId exist")
+    void shouldReturnTodoListGivenUserId() {
+      //Given
+      final String userId = "user-123";
+      when(todoRepository.findAllByUserId(userId)).thenReturn(List.of(testTodo));
+
+      //When & Then
+      final List<TodoResponse> result = todoRepository.findAllByUserId(userId).stream().map(todoMapper::toTodoResponse).toList();
+
+      assertNotNull(result);
+
+    }
+  }
 }
