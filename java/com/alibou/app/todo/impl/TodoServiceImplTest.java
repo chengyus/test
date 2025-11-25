@@ -318,12 +318,18 @@ class TodoServiceImplTest {
       //Given
       final String userId = "user-123";
       when(todoRepository.findAllByUserId(userId)).thenReturn(List.of(testTodo));
+      when(todoMapper.toTodoResponse(testTodo))
+        .thenReturn(todoResponse);
 
       //When & Then
-      final List<TodoResponse> result = todoRepository.findAllByUserId(userId).stream().map(todoMapper::toTodoResponse).toList();
+      List<TodoResponse> result = todoService.findAllTodosForToday(userId);
 
       assertNotNull(result);
+      assertEquals(1, result.size());
+      assertEquals(todoResponse, result.get(0));
 
+      verify(todoRepository).findAllByUserId(userId);
+      verify(todoMapper).toTodoResponse(testTodo);
     }
   }
 }
