@@ -109,6 +109,8 @@ class TodoServiceImplTest {
       .build();
   }
 
+
+
   @Nested
   @DisplayName("Create Todo Tests")
   class CreateTodoTests {
@@ -330,6 +332,70 @@ class TodoServiceImplTest {
 
       verify(todoRepository).findAllByUserId(userId);
       verify(todoMapper).toTodoResponse(testTodo);
+    }
+  }
+
+  @Nested
+  @DisplayName("FindAllTodosByCategory Tests")
+  class FindAllTodosByCategoryTests {
+    @Test
+    @DisplayName("Should return todo list when category and user exist")
+    void shouldReturnTodoListWhenCategoryAndUserExist() {
+      // Given
+      final String catId = "category-123";
+      final String userId = "user-123";
+      when(todoRepository.findAllByUserIdAndCategoryId(userId, catId))
+        .thenReturn(List.of(testTodo));
+      when(todoMapper.toTodoResponse(testTodo))
+        .thenReturn(todoResponse);
+
+      // When
+      final List<TodoResponse> result = todoService.findAllTodosByCategory(catId, userId);
+
+      // Then
+      assertNotNull(result);
+      assertEquals(1, result.size());
+      assertEquals(todoResponse, result.get(0));
+      verify(todoRepository).findAllByUserIdAndCategoryId(userId, catId);
+      verify(todoMapper).toTodoResponse(testTodo);
+    }
+
+    @Test
+    @DisplayName("Should return empty list when no todos found for category and user")
+    void shouldReturnEmptyListWhenNoTodosFound() {
+      // Given
+      final String catId = "category-123";
+      final String userId = "user-123";
+      when(todoRepository.findAllByUserIdAndCategoryId(userId, catId))
+        .thenReturn(List.of());
+
+      // When
+      final List<TodoResponse> result = todoService.findAllTodosByCategory(catId, userId);
+
+      // Then
+      assertNotNull(result);
+      assertTrue(result.isEmpty());
+      verify(todoRepository).findAllByUserIdAndCategoryId(userId, catId);
+      verifyNoInteractions(todoMapper);
+    }
+
+    @Test
+    @DisplayName("Should handle null category ID")
+    void shouldHandleNullCategoryId() {
+      // Given
+      final String catId = null;
+      final String userId = "user-123";
+      when(todoRepository.findAllByUserIdAndCategoryId(userId, catId))
+        .thenReturn(List.of());
+
+      // When
+      final List<TodoResponse> result = todoService.findAllTodosByCategory(catId, userId);
+
+      // Then
+      assertNotNull(result);
+      assertTrue(result.isEmpty());
+      verify(todoRepository).findAllByUserIdAndCategoryId(userId, catId);
+
     }
   }
 }
