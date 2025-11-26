@@ -398,4 +398,81 @@ class TodoServiceImplTest {
 
     }
   }
+
+  @Nested
+  @DisplayName("FindAllDueTodos Tests")
+  class FindAllDueTodosTests {
+
+    @Test
+    @DisplayName("Should return due todos when they exist for a user")
+    void shouldReturnDueTodosWhenExist() {
+      // Given
+      final String userId = "user-123";
+      when(todoRepository.findAllDueTodos(userId)).thenReturn(List.of(testTodo));
+      when(todoMapper.toTodoResponse(testTodo)).thenReturn(todoResponse);
+
+      // When
+      List<TodoResponse> result = todoService.findAllDueTodos(userId);
+
+      // Then
+      assertNotNull(result);
+      assertFalse(result.isEmpty());
+      assertEquals(1, result.size());
+      assertEquals(todoResponse, result.get(0));
+
+      verify(todoRepository).findAllDueTodos(userId);
+      verify(todoMapper).toTodoResponse(testTodo);
+    }
+
+    @Test
+    @DisplayName("Should return an empty list when no due todos exist for a user")
+    void shouldReturnEmptyListWhenNoDueTodosExist() {
+      // Given
+      final String userId = "user-123";
+      when(todoRepository.findAllDueTodos(userId)).thenReturn(List.of());
+
+      // When
+      List<TodoResponse> result = todoService.findAllDueTodos(userId);
+
+      // Then
+      assertNotNull(result);
+      assertTrue(result.isEmpty());
+
+      verify(todoRepository).findAllDueTodos(userId);
+      verifyNoInteractions(todoMapper);
+    }
+  }
+
+  @Nested
+  @DisplayName("Delete Todo Tests")
+  class DeleteTodoTests {
+
+    @Test
+    @DisplayName("Should delete todo successfully when todo exists")
+    void shouldDeleteTodoSuccessfully() {
+      // Given
+      final String todoId = "todo-123";
+      doNothing().when(todoRepository).deleteById(todoId);
+
+      // When
+      todoService.deleteTodoById(todoId);
+
+      // Then
+      verify(todoRepository).deleteById(todoId);
+    }
+
+    @Test
+    @DisplayName("Should not throw an exception when deleting a non-existing todo")
+    void shouldHandleNonExistingTodo() {
+      // Given
+      final String todoId = "non-existing-todo";
+      doNothing().when(todoRepository).deleteById(todoId);
+
+      // When
+      todoService.deleteTodoById(todoId);
+
+      // Then
+      verify(todoRepository).deleteById(todoId);
+    }
+  }
 }
