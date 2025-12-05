@@ -5,6 +5,8 @@
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
     </TestPlan>
     <hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group">
@@ -61,7 +63,7 @@
             </elementProp>
             <elementProp name="" elementType="Header">
               <stringProp name="Header.name">Authorization</stringProp>
-              <stringProp name="Header.value">Bearer eyJhbGciOiJSUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiQUNDRVNTX1RPS0VOIiwic3ViIjoiYWxpQG1haWwuY29tIiwiaWF0IjoxNzY0ODE2Mjg4LCJleHAiOjE3NjQ5MDI2ODh9.PdCPKHdVJJ0RIAwGKzpXe6cNBuvKGq4rgzZAGkFdHJ4k0-dWnSMRhZ9dCqIUHGc8sv-jl4nR2-mTyS-cV0knv44XTG4lUvw-EsHntuTFpGeV1tOXoErg9MabZaVarETY9pbFD-PqijlrvKBek83wOq-PW0tz693dJoFBVRLJ4mwv1oZmlqz-_p6IbWg6ERWPeN_hSzRTyfMr8qUCrNtx1_yj7leZP5fRHLBz7IhQILXa5JJ48a6auuAguWGhQo4lzGGKkLDrJRFZ9RN5isd0aQ1d5it-3g_m7ujErryzTkUPF_s1m3-7bJDUH5-nM4WDytHx02ZjB26bDT941oudlA</stringProp>
+              <stringProp name="Header.value">Bearer ${token}</stringProp>
             </elementProp>
           </collectionProp>
         </HeaderManager>
@@ -96,14 +98,28 @@
             <stringProp name="JSONPostProcessor.referenceNames">jwt_token</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.access_token</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="Scope.variable">jwt_token</stringProp>
             <stringProp name="JSONPostProcessor.defaultValues">TOKEN_NOT_FOUND</stringProp>
+            <stringProp name="Sample.scope">all</stringProp>
           </JSONPostProcessor>
           <hashTree/>
-          <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug - Check Token" enabled="true">
+          <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug - Check Token">
             <boolProp name="displayJMeterProperties">false</boolProp>
             <boolProp name="displayJMeterVariables">true</boolProp>
             <boolProp name="displaySystemProperties">false</boolProp>
           </DebugSampler>
+          <hashTree/>
+          <UserParameters guiclass="UserParametersGui" testclass="UserParameters" testname="User Parameters">
+            <collectionProp name="UserParameters.names">
+              <stringProp name="110541305">token</stringProp>
+            </collectionProp>
+            <collectionProp name="UserParameters.thread_values">
+              <collectionProp name="1257500228">
+                <stringProp name="818834483">${jwt_token}</stringProp>
+              </collectionProp>
+            </collectionProp>
+            <boolProp name="UserParameters.per_iteration">false</boolProp>
+          </UserParameters>
           <hashTree/>
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET - Todos Today">
@@ -141,7 +157,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET - Due Todo">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET - Due Todo" enabled="true">
           <stringProp name="HTTPSampler.domain">${host}</stringProp>
           <stringProp name="HTTPSampler.port">${port}</stringProp>
           <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
@@ -178,10 +194,10 @@
                 <stringProp name="Argument.value">{&#xd;
 	&quot;title&quot;: &quot;Coding ${__threadNum}&quot;,&#xd;
 	&quot;description&quot;: &quot;Load testing&quot;,&#xd;
-	&quot;startDate&quot;: &quot;2025-12-04&quot;,&#xd;
-	&quot;endDate&quot;: &quot;2025-12-04&quot;,&#xd;
-	&quot;startTime&quot;: &quot;11:00&quot;,&#xd;
-	&quot;endTime&quot;: &quot;15:00&quot;,&#xd;
+	&quot;startDate&quot;: &quot;${startDate}&quot;,&#xd;
+	&quot;endDate&quot;: &quot;${endDate}&quot;,&#xd;
+	&quot;startTime&quot;: &quot;${startTime}&quot;,&#xd;
+	&quot;endTime&quot;: &quot;${endTime}&quot;,&#xd;
 	&quot;categoryId&quot;: &quot;1&quot;&#xd;
 }&#xd;
 </stringProp>
@@ -190,7 +206,33 @@
             </collectionProp>
           </elementProp>
         </HTTPSamplerProxy>
-        <hashTree/>
+        <hashTree>
+          <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="startDate" elementType="Argument">
+                <stringProp name="Argument.name">startDate</stringProp>
+                <stringProp name="Argument.value">${__time(yyyy-MM-dd, todayDate)} </stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="endDate" elementType="Argument">
+                <stringProp name="Argument.name">endDate</stringProp>
+                <stringProp name="Argument.value">${__time(yyyy-MM-dd, todayDate)}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="startTime" elementType="Argument">
+                <stringProp name="Argument.name">startTime</stringProp>
+                <stringProp name="Argument.value"> ${__time(HH:mm)}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="endTime" elementType="Argument">
+                <stringProp name="Argument.name">endTime</stringProp>
+                <stringProp name="Argument.value">${__timeShift(HH:mm,,PT2H,,)}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </Arguments>
+          <hashTree/>
+        </hashTree>
         <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think Time">
           <stringProp name="ConstantTimer.delay">1000</stringProp>
           <stringProp name="RandomTimer.range">2000</stringProp>
@@ -233,7 +275,7 @@
           <stringProp name="filename"></stringProp>
         </ResultCollector>
         <hashTree/>
-        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report">
+        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>
@@ -270,7 +312,7 @@
           <stringProp name="filename"></stringProp>
         </ResultCollector>
         <hashTree/>
-        <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report">
+        <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>
@@ -307,7 +349,7 @@
           <stringProp name="filename"></stringProp>
         </ResultCollector>
         <hashTree/>
-        <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Response Time Graph">
+        <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Response Time Graph" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>
