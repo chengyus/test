@@ -9,7 +9,7 @@ DELETE FROM roles;
 INSERT INTO roles (id, name, created_by, created_date) VALUES (1, 'ROLE_USER', 'APP', NOW()) ON CONFLICT (id) DO NOTHING;
 
 -- Seed the users table with the specific user from your query
-INSERT INTO users (id, created_date, is_crendetial_expired, email, is_email_verified, is_enabled, first_name, last_name, is_account_locked, password, phone_number, is_phone_verified)
+INSERT INTO users (id, created_date, is_credentials_expired, email, is_email_verified, is_enabled, first_name, last_name, is_account_locked, password, phone_number, is_phone_verified)
 VALUES ('4a2028bc-4e52-44ce-ac1a-24c581627ce3', '2025-12-04 10:40:34.717635', false, 'ali@mail.com', false, true, 'Ali', 'Bouali', false, '$2a$10$O2Gb7KZYSLvjozxIPLtvue84Gz9Ppiu6TN5sPDPOCp0aaoXTSRIAi', '+49887765445', false)
 ON CONFLICT (id) DO NOTHING;
 
