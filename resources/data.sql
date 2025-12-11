@@ -18,7 +18,7 @@ INSERT INTO users_roles (users_id, roles_id) VALUES ('4a2028bc-4e52-44ce-ac1a-24
 
 -- Seed the categories table using the exact row provided, ensuring idempotency
 INSERT INTO categories (id, created_by, created_date, last_modified_by, last_modified_date, description, name)
-VALUES ('1', '4a2028bc-4e52-44ce-ac1a-24c581627ce3', '2025-11-26 00:00:00', NULL, '2025-11-26 21:23:00', 'Work', 'Work')
+VALUES ('1', 'APP', '2025-11-26 00:00:00', NULL, '2025-11-26 21:23:00', 'Work', 'Work')
 ON CONFLICT (id) DO UPDATE SET
     created_by = EXCLUDED.created_by,
     created_date = EXCLUDED.created_date,
